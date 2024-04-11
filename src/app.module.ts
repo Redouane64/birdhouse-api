@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import config from './config';
 import { LoggerModule } from 'nestjs-pino';
 import { loggingModuleOptions } from './logging';
 import { HouseModule } from './house/house.module';
+import { RequestIdMiddleware } from './common/request-id.middleware';
 
 @Module({
   imports: [
@@ -20,4 +21,8 @@ import { HouseModule } from './house/house.module';
   controllers: [AppController],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestIdMiddleware).forRoutes('*');
+  }
+}
