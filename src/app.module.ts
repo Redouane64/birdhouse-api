@@ -10,7 +10,7 @@ import { loggingModuleOptions } from './logging';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      envFilePath: ['.env', '.env.development'],
+      envFilePath: ['.env', '.env.development', '.env.test'],
       load: config,
     }),
     LoggerModule.forRootAsync(loggingModuleOptions),
