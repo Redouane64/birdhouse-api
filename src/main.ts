@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { AppConfig } from './config/app-config';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { LoggerErrorInterceptor, Logger as PinoLogger } from 'nestjs-pino';
 
 async function bootstrap() {
@@ -14,6 +14,13 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const appConfig = configService.get<AppConfig>('app');
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      disableErrorMessages: appConfig.nodeEnv === 'development',
+    }),
+  );
+
   await app.listen(appConfig.port, appConfig.host);
 
   Logger.log(`app is listening on ${await app.getUrl()}`, bootstrap.name);
