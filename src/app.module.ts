@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import config from './config';
 import { LoggerModule } from 'nestjs-pino';
 import { loggingModuleOptions } from './logging';
+import { HouseModule } from './house/house.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { loggingModuleOptions } from './logging';
       load: config,
     }),
     LoggerModule.forRootAsync(loggingModuleOptions),
+    HouseModule,
   ],
   controllers: [AppController],
   providers: [],
