@@ -23,7 +23,7 @@ export const loggingModuleOptions: LoggerModuleAsyncParams = {
         transport: {
           targets,
         },
-        // genReqId: () => randomUUID(),
+        genReqId: () => randomUUID(),
       },
     };
   },
