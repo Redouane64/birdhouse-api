@@ -6,7 +6,7 @@ import {
   AddOccupancyDto,
   RegisterBirdhouseDto,
   UpdateBirdhouseDto,
-} from '../src/house/dtos';
+} from '../src/houses/dtos';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;

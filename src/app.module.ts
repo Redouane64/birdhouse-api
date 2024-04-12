@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import config from './config';
 import { LoggerModule } from 'nestjs-pino';
 import { loggingModuleOptions } from './logging';
-import { HouseModule } from './house/house.module';
+import { HousesModule } from './houses/houses.module';
 import { RequestIdMiddleware } from './common/request-id.middleware';
 
 @Module({
@@ -16,7 +16,7 @@ import { RequestIdMiddleware } from './common/request-id.middleware';
       load: config,
     }),
     LoggerModule.forRootAsync(loggingModuleOptions),
-    HouseModule,
+    HousesModule,
   ],
   controllers: [AppController],
   providers: [],

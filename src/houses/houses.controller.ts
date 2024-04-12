@@ -18,7 +18,7 @@ import {
 } from './dtos';
 
 @Controller('house')
-export class HouseController {
+export class HousesController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe({ transform: true }))
