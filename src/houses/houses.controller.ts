@@ -16,25 +16,26 @@ import {
   RegisterBirdhouseDto,
   UpdateBirdhouseDto,
 } from './dtos';
+import { HousesService } from './houses.service';
 
 @Controller('house')
 export class HousesController {
+  constructor(private readonly houseService: HousesService) {}
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe({ transform: true }))
-  register(@Body() data: RegisterBirdhouseDto) {
-    // TODO: implement this
-    return Object.assign({ id: '9e89ac4f-23b0-4ceb-be0e-2412dfacfe02' }, data);
+  async register(@Body() data: RegisterBirdhouseDto) {
+    return await this.houseService.create(data);
   }
 
   @Patch(':ubid')
   @HttpCode(HttpStatus.OK)
-  update(
+  async update(
     @Param('ubid', new ParseUUIDPipe()) ubid: string,
     @Body() data: UpdateBirdhouseDto,
   ) {
-    // TODO: implement this
-    return Object.assign({ ubid }, data);
+    return await this.houseService.update(ubid, data);
   }
 
   @Post(':ubid/occupancy')
@@ -57,12 +58,7 @@ export class HousesController {
 
   @Get(':ubid')
   @HttpCode(HttpStatus.OK)
-  get(@Param('ubid', new ParseUUIDPipe()) ubid: string) {
-    return {
-      ubid,
-      name: 'meadows',
-      latitude: 12.234,
-      longitude: 45.678,
-    };
+  async get(@Param('ubid', new ParseUUIDPipe()) ubid: string) {
+    return await this.houseService.get(ubid);
   }
 }
