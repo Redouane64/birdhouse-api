@@ -6,6 +6,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { loggingModuleOptions } from './logging';
 import { HousesModule } from './houses/houses.module';
 import { RequestIdMiddleware } from './common/request-id.middleware';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RequestIdMiddleware } from './common/request-id.middleware';
     }),
     LoggerModule.forRootAsync(loggingModuleOptions),
     HousesModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [],
