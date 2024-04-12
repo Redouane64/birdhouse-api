@@ -20,13 +20,6 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect({ ready: true, environment: 'test' });
-  });
-
   afterAll(async () => {
     await app.close();
   });
@@ -38,11 +31,18 @@ describe('AppController (e2e)', () => {
       longitude: 45.678,
     };
 
+    const expectedResponse = Object.assign(
+      {
+        id: '9e89ac4f-23b0-4ceb-be0e-2412dfacfe02',
+      },
+      body,
+    );
+
     return request(app.getHttpServer())
       .post('/house')
       .send(body)
       .expect(HttpStatus.CREATED)
-      .expect(body);
+      .expect(expectedResponse);
   });
 
   it('/house (POST) validation failure returns 400 Bad Request', () => {

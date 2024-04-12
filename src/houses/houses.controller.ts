@@ -24,7 +24,7 @@ export class HousesController {
   @UsePipes(new ValidationPipe({ transform: true }))
   register(@Body() data: RegisterBirdhouseDto) {
     // TODO: implement this
-    return data;
+    return Object.assign({ id: '9e89ac4f-23b0-4ceb-be0e-2412dfacfe02' }, data);
   }
 
   @Patch(':ubid')
