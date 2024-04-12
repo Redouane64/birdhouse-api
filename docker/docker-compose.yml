@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  db:
+    container_name: birdhouse-db
+    image: postgres:15.6-alpine3.19
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: birdhouse
+    ports:
+      - 14321:5432
+    volumes:
+      - ./init.d:/docker-entrypoint-initdb.d
