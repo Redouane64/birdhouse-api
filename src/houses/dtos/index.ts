@@ -4,7 +4,6 @@ import {
   IsOptional,
   IsPositive,
   Length,
-  Min,
 } from 'class-validator';
 import { Birdhouse } from '../interfaces/birdhouse.interface';
 
@@ -25,21 +24,22 @@ export class UpdateBirdhouseDto
   implements Partial<Pick<Birdhouse, 'name' | 'latitude' | 'longitude'>>
 {
   @IsOptional()
+  @Length(4, 16)
   name?: string;
 
   @IsOptional()
+  @IsLatitude()
   latitude?: number;
 
   @IsOptional()
+  @IsLongitude()
   longitude?: number;
 }
 
 export class AddOccupancyDto implements Pick<Birdhouse, 'birds' | 'eggs'> {
   @IsPositive()
-  @Min(0)
   birds: number;
 
   @IsPositive()
-  @Min(0)
   eggs: number;
 }
