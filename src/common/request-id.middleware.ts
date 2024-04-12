@@ -1,5 +1,3 @@
-// request-id.middleware.ts
-
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
@@ -9,7 +7,6 @@ export class RequestIdMiddleware implements NestMiddleware {
     next();
     if (req.id) {
       res.set('X-Request-Id', req.id as string);
-      req.headers['x-correlation-id'] = req.id as string;
     }
   }
 }
