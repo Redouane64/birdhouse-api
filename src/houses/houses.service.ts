@@ -47,16 +47,10 @@ export class HousesService {
   }
 
   async update(ubid: string, data: UpdateBirdhouseDto) {
-    const [birdhouse] = await this.dataSource.query<Birdhouse[]>(
-      `UPDATE birdhouses
-       SET name = $1, longitude = $2, latitude = $3
-       WHERE ubid = $4
-       RETURNING name, longitude, latitude`,
-      [data.name, data.longitude, data.latitude, ubid],
-    );
+    const birdhouse = await this.updateBirdhouse(ubid, data);
 
     if (!birdhouse) {
-      throw new NotFoundException(`birdhouse does not exist`);
+      throw new NotFoundException(`Birdhouse does not exist`);
     }
 
     const [occupancy] = await this.dataSource.query<Occupancy[]>(
@@ -86,5 +80,25 @@ export class HousesService {
     );
 
     return { ...birdhouse, ...occupancy };
+  }
+
+  async updateBirdhouse(ubid: string, data: UpdateBirdhouseDto) {
+    const updateResult = await this.dataSource
+      .createQueryBuilder()
+      .update<Birdhouse>('birdhouses', {
+        name: data.name,
+        longitude: data.longitude,
+        latitude: data.latitude,
+      })
+      .where('ubid = :ubid', { ubid })
+      .returning('name, longitude, latitude')
+      .execute();
+
+    if (updateResult.affected === 0) {
+      return null;
+    }
+
+    const [birdhouse] = updateResult.raw;
+    return birdhouse;
   }
 }
