@@ -12,7 +12,7 @@ export class HousesService {
   async get(ubid: string) {
     const result = await this.pool.query(
       `SELECT name, longitude, latitude
-       FROM houses
+       FROM birdhouses
        WHERE ubid = $1`,
       [ubid],
     );
@@ -21,22 +21,34 @@ export class HousesService {
       throw new NotFoundException(`house does not exist`);
     }
 
+    const history = await this.pool.query(
+      `SELECT eggs, birds FROM birdhouses_history WHERE ubid = $1 ORDER BY created_at DESC LIMIT 1`,
+      [ubid],
+    );
+    const [entry] = history.rows;
     const [house] = result.rows;
-    return house;
+    return { ...house, birds: entry.birds, eggs: entry.eggs };
   }
 
   async create(data: RegisterBirdhouseDto) {
-    const result = await this.pool.query(
-      `INSERT INTO houses(name, longitude, latitude) VALUES ($1, $2, $3) RETURNING *`,
+    const birdhouse = await this.pool.query(
+      `INSERT INTO birdhouses(name, longitude, latitude) VALUES ($1, $2, $3) RETURNING *`,
       [data.name, data.longitude, data.latitude],
     );
-    const [house] = result.rows;
-    return house;
+    const [house] = birdhouse.rows;
+    const history = await this.pool.query(
+      `INSERT INTO birdhouses_history(ubid, eggs, birds) VALUES ($1, $2, $3) RETURNING birds, eggs`,
+      [house.ubid, 0, 0],
+    );
+    const [entry] = history.rows;
+    const { birds, eggs } = entry;
+
+    return { ...house, birds, eggs };
   }
 
   async update(ubid: string, data: UpdateBirdhouseDto) {
     const result = await this.pool.query(
-      `UPDATE houses
+      `UPDATE birdhouses
        SET name = $1, longitude = $2, latitude = $3
        WHERE ubid = $4
        RETURNING name, longitude, latitude`,
@@ -47,7 +59,13 @@ export class HousesService {
       throw new NotFoundException(`house does not exist`);
     }
 
+    const history = await this.pool.query(
+      `SELECT ubid, eggs, birds FROM birdhouses_history WHERE ubid =  $1`,
+      [ubid],
+    );
     const [house] = result.rows;
-    return house;
+    const [entry] = history.rows;
+    const { eggs, birds } = entry;
+    return { ...house, eggs, birds };
   }
 }
