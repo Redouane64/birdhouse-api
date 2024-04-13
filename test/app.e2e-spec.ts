@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { Pool } from 'pg';
+import { DataSource } from 'typeorm';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
-  let pool: Pool;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -16,7 +16,7 @@ describe('AppController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    pool = app.get(Pool);
+    dataSource = app.get(DataSource);
   });
 
   afterAll(async () => {
@@ -24,9 +24,10 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', () => {
-    jest.spyOn(pool, 'query').mockImplementationOnce(() => ({
-      rows: [{ time: '2024-04-12T23:40:51.387Z' }],
-    }));
+    const time = '2024-04-12T23:40:51.387Z';
+    jest
+      .spyOn(dataSource, 'query')
+      .mockImplementationOnce(async () => [{ time }]);
 
     return request(app.getHttpServer())
       .get('/')
@@ -34,7 +35,7 @@ describe('AppController (e2e)', () => {
       .expect({
         ready: true,
         environment: 'test',
-        db: { ready: true, time: '2024-04-12T23:40:51.387Z' },
+        db: { ready: true, time },
       });
   });
 });
