@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -18,6 +19,7 @@ import {
 } from './dtos';
 import { HousesService } from './birdhouses.service';
 import { NotEmptyObjectPipe } from './pipes/not-empty-object.pipe';
+import { UbidAuthGuard } from './guards/ubid-auth.guard';
 
 @Controller('birdhouses')
 export class BirdhousesController {
@@ -32,6 +34,7 @@ export class BirdhousesController {
 
   @Patch(':ubid')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(UbidAuthGuard)
   async update(
     @Param('ubid', new ParseUUIDPipe()) ubid: string,
     @Body(new NotEmptyObjectPipe()) data: UpdateBirdhouseDto,
@@ -41,6 +44,7 @@ export class BirdhousesController {
 
   @Post(':ubid/occupancy')
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(UbidAuthGuard)
   async addOccupancy(
     @Param('ubid', new ParseUUIDPipe()) ubid: string,
     @Body() data: AddOccupancyDto,
@@ -50,6 +54,7 @@ export class BirdhousesController {
 
   @Get(':ubid')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(UbidAuthGuard)
   async get(@Param('ubid', new ParseUUIDPipe()) ubid: string) {
     return await this.houseService.get(ubid);
   }
