@@ -16,11 +16,11 @@ import {
   RegisterBirdhouseDto,
   UpdateBirdhouseDto,
 } from './dtos';
-import { HousesService } from './houses.service';
+import { HousesService } from './birdhouses.service';
 import { NotEmptyObjectPipe } from './pipes/not-empty-object.pipe';
 
-@Controller('houses')
-export class HousesController {
+@Controller('birdhouses')
+export class BirdhousesController {
   constructor(private readonly houseService: HousesService) {}
 
   @Post()

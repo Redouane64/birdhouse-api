@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import config from './config';
 import { LoggerModule } from 'nestjs-pino';
 import { loggingModuleOptions } from './logging';
-import { HousesModule } from './houses/houses.module';
+import { BirdhousesModule } from './birdhouses/birdhouses.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeormModuleOptions } from './config/typeorm-module.option';
 
@@ -18,7 +18,7 @@ import { typeormModuleOptions } from './config/typeorm-module.option';
     }),
     LoggerModule.forRootAsync(loggingModuleOptions),
     TypeOrmModule.forRootAsync(typeormModuleOptions),
-    HousesModule,
+    BirdhousesModule,
   ],
   controllers: [AppController],
   providers: [],

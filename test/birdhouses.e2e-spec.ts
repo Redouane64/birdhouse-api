@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { AddOccupancyDto, RegisterBirdhouseDto } from '../src/houses/dtos';
+import { AddOccupancyDto, RegisterBirdhouseDto } from '../src/birdhouses/dtos';
 import { DataSource } from 'typeorm';
-import { HousesService } from '../src/houses/houses.service';
+import { HousesService } from '../src/birdhouses/birdhouses.service';
 
-describe('AppController (e2e)', () => {
+describe('BirdhousesController (e2e)', () => {
   let app: INestApplication;
   let dataSource: DataSource;
   let housesService: HousesService;
@@ -53,7 +53,7 @@ describe('AppController (e2e)', () => {
         ]);
 
       return request(app.getHttpServer())
-        .post('/houses')
+        .post('/birdhouses')
         .send(body)
         .expect(HttpStatus.CREATED)
         .expect(expectedResponse);
@@ -77,7 +77,7 @@ describe('AppController (e2e)', () => {
         .mockImplementationOnce(async () => [expectedResponse]);
 
       return request(app.getHttpServer())
-        .post('/houses')
+        .post('/birdhouses')
         .send(body)
         .expect(HttpStatus.BAD_REQUEST)
         .expect(expectedResponse);
@@ -103,7 +103,7 @@ describe('AppController (e2e)', () => {
         .mockImplementation(async () => body);
 
       return request(app.getHttpServer())
-        .patch(`/houses/${ubid}`)
+        .patch(`/birdhouses/${ubid}`)
         .send(body)
         .expect(HttpStatus.OK)
         .expect({ ...body, ...expectedbirdAndEggs });
@@ -113,7 +113,7 @@ describe('AppController (e2e)', () => {
       const ubid = 'd41b063e-8171-435b-9908-c7265e08e85b';
 
       return request(app.getHttpServer())
-        .patch(`/houses/${ubid}`)
+        .patch(`/birdhouses/${ubid}`)
         .expect(HttpStatus.BAD_REQUEST)
         .send({})
         .expect({
@@ -137,7 +137,7 @@ describe('AppController (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .patch(`/houses/${ubid}`)
+        .patch(`/birdhouses/${ubid}`)
         .send(body)
         .expect(HttpStatus.NOT_FOUND)
         .expect({
@@ -172,7 +172,7 @@ describe('AppController (e2e)', () => {
         .mockImplementationOnce(async () => [occupancy]);
 
       return request(app.getHttpServer())
-        .post(`/houses/${ubid}/occupancy`)
+        .post(`/birdhouses/${ubid}/occupancy`)
         .send(occupancy)
         .expect(HttpStatus.CREATED)
         .expect(expectBody);
@@ -194,7 +194,7 @@ describe('AppController (e2e)', () => {
         .mockImplementation(async () => [expectedBody]);
 
       return request(app.getHttpServer())
-        .get(`/houses/${ubid}`)
+        .get(`/birdhouses/${ubid}`)
         .expect(HttpStatus.OK)
         .expect(expectedBody);
     });
