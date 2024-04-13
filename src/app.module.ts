@@ -5,7 +5,8 @@ import config from './config';
 import { LoggerModule } from 'nestjs-pino';
 import { loggingModuleOptions } from './logging';
 import { HousesModule } from './houses/houses.module';
-import { DatabaseModule } from './database/database.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeormModuleOptions } from './config/typeorm-module.option';
 
 @Module({
   imports: [
@@ -16,8 +17,8 @@ import { DatabaseModule } from './database/database.module';
       load: config,
     }),
     LoggerModule.forRootAsync(loggingModuleOptions),
+    TypeOrmModule.forRootAsync(typeormModuleOptions),
     HousesModule,
-    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [],
