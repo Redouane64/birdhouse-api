@@ -2,16 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import {
-  AddOccupancyDto,
-  RegisterBirdhouseDto,
-  UpdateBirdhouseDto,
-} from '../src/houses/dtos';
+import { AddOccupancyDto, RegisterBirdhouseDto } from '../src/houses/dtos';
 import { DataSource } from 'typeorm';
+import { HousesService } from '../src/houses/houses.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let housesService: HousesService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -22,12 +20,13 @@ describe('AppController (e2e)', () => {
     await app.init();
 
     dataSource = moduleFixture.get(DataSource);
+    housesService = moduleFixture.get(HousesService);
   });
 
   afterAll(async () => {
     await app.close();
     jest.clearAllMocks();
-  }, 3000);
+  });
 
   describe('Register birdhouse', () => {
     it('/houses (POST)', () => {
@@ -85,21 +84,23 @@ describe('AppController (e2e)', () => {
     });
   });
 
-  describe('Register birdhouse', () => {
+  describe('Update birdhouse', () => {
     it('/houses/:ubid (PATCH)', () => {
       const ubid = '40a5ec43-9f45-487f-ba2e-8f3fa0395071';
       const body = {
-        ubid,
         name: 'meadows',
         latitude: 12.234,
         longitude: 45.678,
       };
-      const expectedbirdAndEggs = { eggs: 2, birds: 2 };
+      const expectedbirdAndEggs = { eggs: 0, birds: 0 };
 
       jest
         .spyOn(dataSource, 'query')
-        .mockImplementationOnce(async () => [body])
         .mockImplementationOnce(async () => [expectedbirdAndEggs]);
+
+      jest
+        .spyOn(housesService, 'updateBirdhouse')
+        .mockImplementation(async () => body);
 
       return request(app.getHttpServer())
         .patch(`/houses/${ubid}`)
@@ -108,46 +109,74 @@ describe('AppController (e2e)', () => {
         .expect({ ...body, ...expectedbirdAndEggs });
     });
 
-    it('/houses/:ubid (PATCH) ubid param validation failure returns 400 Bad Request', () => {
-      const badUbid = '123';
+    it('/houses/:ubid (PATCH) disallow empty payload', () => {
+      const ubid = 'd41b063e-8171-435b-9908-c7265e08e85b';
+
       return request(app.getHttpServer())
-        .patch(`/houses/${badUbid}`)
+        .patch(`/houses/${ubid}`)
         .expect(HttpStatus.BAD_REQUEST)
+        .send({})
         .expect({
-          message: 'Validation failed (uuid is expected)',
+          message: 'Empty object is not allowed',
           error: 'Bad Request',
           statusCode: 400,
         });
     });
-  });
 
-  it('/house/:ubid/occupancy (POST)', () => {
-    const ubid = '355ee836-a427-40da-9edd-827789d3ee61';
+    it('/houses/:ubid (PATCH) birdhouse not found', () => {
+      const ubid = 'd41b063e-8171-435b-9908-c7265e08e85b';
 
-    const occupancy: AddOccupancyDto = {
-      birds: 2,
-      eggs: 3,
-    };
+      jest
+        .spyOn(housesService, 'updateBirdhouse')
+        .mockImplementation(async () => null);
 
-    const expectBody = Object.assign(
-      {
+      const body = {
         name: 'meadows',
         latitude: 12.234,
         longitude: 45.678,
-      },
-      occupancy,
-    );
+      };
 
-    jest
-      .spyOn(dataSource, 'query')
-      .mockImplementationOnce(async () => [expectBody])
-      .mockImplementationOnce(async () => [occupancy]);
+      return request(app.getHttpServer())
+        .patch(`/houses/${ubid}`)
+        .send(body)
+        .expect(HttpStatus.NOT_FOUND)
+        .expect({
+          message: 'Birdhouse does not exist',
+          error: 'Not Found',
+          statusCode: 404,
+        });
+    });
+  });
 
-    return request(app.getHttpServer())
-      .post(`/houses/${ubid}/occupancy`)
-      .send(occupancy)
-      .expect(HttpStatus.CREATED)
-      .expect(expectBody);
+  describe('Birdhouse occupancy', () => {
+    it('/house/:ubid/occupancy (POST)', () => {
+      const ubid = '355ee836-a427-40da-9edd-827789d3ee61';
+
+      const occupancy: AddOccupancyDto = {
+        birds: 2,
+        eggs: 3,
+      };
+
+      const expectBody = Object.assign(
+        {
+          name: 'meadows',
+          latitude: 12.234,
+          longitude: 45.678,
+        },
+        occupancy,
+      );
+
+      jest
+        .spyOn(dataSource, 'query')
+        .mockImplementationOnce(async () => [expectBody])
+        .mockImplementationOnce(async () => [occupancy]);
+
+      return request(app.getHttpServer())
+        .post(`/houses/${ubid}/occupancy`)
+        .send(occupancy)
+        .expect(HttpStatus.CREATED)
+        .expect(expectBody);
+    });
   });
 
   describe('Get birdhouse', () => {
