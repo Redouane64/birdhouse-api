@@ -68,4 +68,26 @@ export class HousesService {
     const { eggs, birds } = entry;
     return { ...house, eggs, birds };
   }
+
+  async updateOccupancy(ubid: string, eggs: number, birds: number) {
+    const getBirdhouseResult = await this.pool.query(
+      `SELECT name, longitude, latitude
+        FROM birdhouses
+        WHERE ubid = $1`,
+      [ubid],
+    );
+
+    if (getBirdhouseResult.rowCount === 0) {
+      throw new NotFoundException(`house does not exist`);
+    }
+
+    const updateOccupancyResult = await this.pool.query(
+      `INSERT INTO birdhouses_history(ubid, eggs, birds) VALUES ($1, $2, $3) RETURNING birds, eggs`,
+      [ubid, eggs, birds],
+    );
+
+    const [house] = getBirdhouseResult.rows;
+    const [history] = updateOccupancyResult.rows;
+    return { ...house, ...history };
+  }
 }

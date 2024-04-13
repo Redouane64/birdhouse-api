@@ -40,20 +40,11 @@ export class HousesController {
 
   @Post(':ubid/occupancy')
   @HttpCode(HttpStatus.CREATED)
-  addOccupancy(
+  async addOccupancy(
     @Param('ubid', new ParseUUIDPipe()) ubid: string,
     @Body() data: AddOccupancyDto,
   ) {
-    // TODO: implement this
-    return Object.assign(
-      {
-        ubid,
-        name: 'meadows',
-        latitude: 12.234,
-        longitude: 45.678,
-      },
-      data,
-    );
+    return await this.houseService.updateOccupancy(ubid, data.eggs, data.birds);
   }
 
   @Get(':ubid')
