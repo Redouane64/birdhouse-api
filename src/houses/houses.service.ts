@@ -55,12 +55,12 @@ export class HousesService {
       [data.name, data.longitude, data.latitude, ubid],
     );
 
-    if (birdhouse) {
+    if (!birdhouse) {
       throw new NotFoundException(`birdhouse does not exist`);
     }
 
     const [occupancy] = await this.dataSource.query<Occupancy[]>(
-      `SELECT ubid, eggs, birds FROM birdhouses_history WHERE ubid =  $1`,
+      `SELECT eggs, birds FROM birdhouses_history WHERE ubid =  $1`,
       [ubid],
     );
 
