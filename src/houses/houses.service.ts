@@ -1,53 +1,53 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Pool } from 'pg';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { RegisterBirdhouseDto, UpdateBirdhouseDto } from './dtos';
+import { DataSource } from 'typeorm';
+import { Birdhouse, Occupancy } from './interfaces/birdhouse.interface';
 
 @Injectable()
 export class HousesService {
-  constructor(
-    @Inject(Pool)
-    private readonly pool: Pool,
-  ) {}
+  constructor(private readonly dataSource: DataSource) {}
 
   async get(ubid: string) {
-    const result = await this.pool.query(
+    const [birdhouse] = await this.dataSource.query<Birdhouse[]>(
       `SELECT name, longitude, latitude
        FROM birdhouses
        WHERE ubid = $1`,
       [ubid],
     );
 
-    if (result.rowCount === 0) {
-      throw new NotFoundException(`house does not exist`);
+    if (!birdhouse) {
+      throw new NotFoundException(`birdhouse does not exist`);
     }
 
-    const history = await this.pool.query(
+    const [occupancy] = await this.dataSource.query<Occupancy[]>(
       `SELECT eggs, birds FROM birdhouses_history WHERE ubid = $1 ORDER BY created_at DESC LIMIT 1`,
       [ubid],
     );
-    const [entry] = history.rows;
-    const [house] = result.rows;
-    return { ...house, birds: entry.birds, eggs: entry.eggs };
+
+    return { ...birdhouse, ...occupancy };
   }
 
   async create(data: RegisterBirdhouseDto) {
-    const birdhouse = await this.pool.query(
-      `INSERT INTO birdhouses(name, longitude, latitude) VALUES ($1, $2, $3) RETURNING *`,
-      [data.name, data.longitude, data.latitude],
+    const [birdhouse, occupancy] = await this.dataSource.transaction(
+      'SERIALIZABLE',
+      async (manager) => {
+        const [birdhouse] = await manager.query<Birdhouse[]>(
+          `INSERT INTO birdhouses(name, longitude, latitude) VALUES ($1, $2, $3) RETURNING *`,
+          [data.name, data.longitude, data.latitude],
+        );
+        const [occupancy] = await manager.query<Occupancy[]>(
+          `INSERT INTO birdhouses_history(ubid, eggs, birds) VALUES ($1, $2, $3) RETURNING birds, eggs`,
+          [birdhouse.ubid, 0, 0],
+        );
+        return [birdhouse, occupancy];
+      },
     );
-    const [house] = birdhouse.rows;
-    const history = await this.pool.query(
-      `INSERT INTO birdhouses_history(ubid, eggs, birds) VALUES ($1, $2, $3) RETURNING birds, eggs`,
-      [house.ubid, 0, 0],
-    );
-    const [entry] = history.rows;
-    const { birds, eggs } = entry;
 
-    return { ...house, birds, eggs };
+    return { ...birdhouse, ...occupancy };
   }
 
   async update(ubid: string, data: UpdateBirdhouseDto) {
-    const result = await this.pool.query(
+    const [birdhouse] = await this.dataSource.query<Birdhouse[]>(
       `UPDATE birdhouses
        SET name = $1, longitude = $2, latitude = $3
        WHERE ubid = $4
@@ -55,39 +55,36 @@ export class HousesService {
       [data.name, data.longitude, data.latitude, ubid],
     );
 
-    if (result.rowCount === 0) {
-      throw new NotFoundException(`house does not exist`);
+    if (birdhouse) {
+      throw new NotFoundException(`birdhouse does not exist`);
     }
 
-    const history = await this.pool.query(
+    const [occupancy] = await this.dataSource.query<Occupancy[]>(
       `SELECT ubid, eggs, birds FROM birdhouses_history WHERE ubid =  $1`,
       [ubid],
     );
-    const [house] = result.rows;
-    const [entry] = history.rows;
-    const { eggs, birds } = entry;
-    return { ...house, eggs, birds };
+
+    return { ...birdhouse, ...occupancy };
   }
 
   async updateOccupancy(ubid: string, eggs: number, birds: number) {
-    const getBirdhouseResult = await this.pool.query(
+    const [birdhouse] = await this.dataSource.query<Birdhouse[]>(
       `SELECT name, longitude, latitude
         FROM birdhouses
-        WHERE ubid = $1`,
+        WHERE ubid = $1
+        LIMIT 1`,
       [ubid],
     );
 
-    if (getBirdhouseResult.rowCount === 0) {
-      throw new NotFoundException(`house does not exist`);
+    if (!birdhouse) {
+      throw new NotFoundException(`birdhouse does not exist`);
     }
 
-    const updateOccupancyResult = await this.pool.query(
+    const [occupancy] = await this.dataSource.query<Occupancy[]>(
       `INSERT INTO birdhouses_history(ubid, eggs, birds) VALUES ($1, $2, $3) RETURNING birds, eggs`,
       [ubid, eggs, birds],
     );
 
-    const [house] = getBirdhouseResult.rows;
-    const [history] = updateOccupancyResult.rows;
-    return { ...house, ...history };
+    return { ...birdhouse, ...occupancy };
   }
 }
