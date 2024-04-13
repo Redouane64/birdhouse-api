@@ -17,6 +17,7 @@ import {
   UpdateBirdhouseDto,
 } from './dtos';
 import { HousesService } from './houses.service';
+import { NotEmptyObjectPipe } from './pipes/not-empty-object.pipe';
 
 @Controller('houses')
 export class HousesController {
@@ -33,7 +34,7 @@ export class HousesController {
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('ubid', new ParseUUIDPipe()) ubid: string,
-    @Body() data: UpdateBirdhouseDto,
+    @Body(new NotEmptyObjectPipe()) data: UpdateBirdhouseDto,
   ) {
     return await this.houseService.update(ubid, data);
   }
