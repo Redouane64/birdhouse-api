@@ -1,13 +1,13 @@
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppConfig } from './config';
-import { Pool } from 'pg';
+import { DataSource } from 'typeorm';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly configService: ConfigService,
-    private readonly pool: Pool,
+    private readonly dataSource: DataSource,
   ) {}
 
   @Get()
@@ -16,14 +16,12 @@ export class AppController {
     const appConfig = this.configService.get<AppConfig>('app');
 
     // verify database connection readiness by querying database time
-    const {
-      rows: [row],
-    } = await this.pool.query('SELECT now() AS time');
+    const [{ time }] = await this.dataSource.query('SELECT now() AS time');
 
     return {
       ready: true,
       environment: appConfig.nodeEnv,
-      db: { ready: !!row, time: row.time },
+      db: { ready: !!time, time },
     };
   }
 }
