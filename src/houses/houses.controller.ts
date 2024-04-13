@@ -18,7 +18,7 @@ import {
 } from './dtos';
 import { HousesService } from './houses.service';
 
-@Controller('house')
+@Controller('houses')
 export class HousesController {
   constructor(private readonly houseService: HousesService) {}
 
