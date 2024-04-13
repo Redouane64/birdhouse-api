@@ -7,6 +7,8 @@ import {
 } from '@nestjs/common';
 import { databaseProvider } from './database.provider';
 import { Pool } from 'pg';
+import { ConfigService } from '@nestjs/config';
+import { AppConfig } from '../config';
 
 @Global()
 @Module({
@@ -14,13 +16,22 @@ import { Pool } from 'pg';
   exports: [databaseProvider],
 })
 export class DatabaseModule implements OnModuleInit, OnModuleDestroy {
-  constructor(@Inject(Pool) private readonly pool: Pool) {}
+  constructor(
+    @Inject(Pool) private readonly pool: Pool,
+    private readonly configService: ConfigService,
+  ) {}
 
   async onModuleInit() {
-    await this.pool.connect();
+    const appConfig = this.configService.get<AppConfig>('app');
+    if (appConfig.nodeEnv !== 'test') {
+      await this.pool.connect();
+    }
   }
 
   async onModuleDestroy() {
-    await this.pool.end();
+    const appConfig = this.configService.get<AppConfig>('app');
+    if (appConfig.nodeEnv !== 'test') {
+      await this.pool.end();
+    }
   }
 }
