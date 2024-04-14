@@ -7,6 +7,7 @@ import {
 import { BirdhouseEntity } from '../birdhouse/entities/birdhouse.entity';
 import { BirdhouseOccupancyEntity } from '../birdhouse/entities/birdhouse-occupancy.entity';
 import { AppConfig } from './app-config';
+import { DatabaseLogger } from '../database/logger';
 
 export const typeOrmModuleOptions: TypeOrmModuleAsyncOptions = {
   inject: [ConfigService],
@@ -23,8 +24,9 @@ export const typeOrmModuleOptions: TypeOrmModuleAsyncOptions = {
       password,
       applicationName: 'birdhouse-api',
       entities: [BirdhouseEntity, BirdhouseOccupancyEntity],
-      logger: 'advanced-console',
+      logger: new DatabaseLogger(),
       logging: appConfig.nodeEnv === 'test' ? false : 'all',
+      synchronize: false,
     };
   },
 };

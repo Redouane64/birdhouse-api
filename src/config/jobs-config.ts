@@ -1,9 +1,6 @@
 import { ConfigFactory } from '@nestjs/config';
 import * as Joi from 'joi';
 
-import { config } from 'dotenv';
-config({ path: ['.env', '.env.development'] });
-
 export interface JobsConfig {
   birdhousePruningPeriod: string;
 }

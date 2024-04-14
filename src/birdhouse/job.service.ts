@@ -2,11 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { DataSource, JsonContains } from 'typeorm';
 
-import { config } from 'dotenv';
-config({ path: ['.env', '.env.development'] });
+import * as dotenv from 'dotenv';
+dotenv.config({ path: ['.env', '.env.development'] });
 
 @Injectable()
-export class JobsService {
+export class JobService {
   private readonly logger = new Logger(JsonContains.name);
 
   constructor(private readonly dataSource: DataSource) {}
@@ -15,7 +15,7 @@ export class JobsService {
     process.env.CRON_PRUNE_BIRDHOUSE_PERIOD ||
       CronExpression.EVERY_DAY_AT_MIDNIGHT,
     {
-      name: 'prune_birdhouses',
+      name: 'prune_birdhouses_job',
     },
   )
   async pruneBirdhouse() {

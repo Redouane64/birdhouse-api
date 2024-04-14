@@ -14,7 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      envFilePath: ['.env', '.env.development', '.env.test'],
+      envFilePath: ['.env', '.env.development'],
       load: config,
     }),
     LoggerModule.forRootAsync(loggingModuleOptions),
