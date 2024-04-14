@@ -124,7 +124,6 @@ export class BirdhouseService {
         eggs,
         birds,
         ubid,
-        birdhouse: { ubid },
       },
       { transaction: false },
     );
@@ -152,7 +151,6 @@ export class BirdhouseService {
 
       return this.joinArrays(birdhouses, occupancy, 'ubid').map(
         (birdhouse) => ({
-          id: birdhouse.id,
           ubid: birdhouse.ubid,
           name: birdhouse.name,
           longitude: birdhouse.longitude,
