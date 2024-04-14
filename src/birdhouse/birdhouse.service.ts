@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 import { Birdhouse, Occupancy } from './interfaces/birdhouse.interface';
 
 @Injectable()
-export class HousesService {
+export class BirdhouseService {
   constructor(private readonly dataSource: DataSource) {}
 
   async get(ubid: string) {

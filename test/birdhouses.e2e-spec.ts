@@ -2,14 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { AddOccupancyDto, RegisterBirdhouseDto } from '../src/birdhouses/dtos';
+import { AddOccupancyDto, RegisterBirdhouseDto } from '../src/birdhouse/dtos';
 import { DataSource } from 'typeorm';
-import { HousesService } from '../src/birdhouses/birdhouses.service';
+import { BirdhouseService } from '../src/birdhouse/birdhouse.service';
 
 describe('BirdhousesController (e2e)', () => {
   let app: INestApplication;
   let dataSource: DataSource;
-  let housesService: HousesService;
+  let housesService: BirdhouseService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -20,7 +20,7 @@ describe('BirdhousesController (e2e)', () => {
     await app.init();
 
     dataSource = moduleFixture.get(DataSource);
-    housesService = moduleFixture.get(HousesService);
+    housesService = moduleFixture.get(BirdhouseService);
   });
 
   afterAll(async () => {

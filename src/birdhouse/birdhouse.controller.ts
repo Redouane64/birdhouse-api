@@ -17,14 +17,14 @@ import {
   RegisterBirdhouseDto,
   UpdateBirdhouseDto,
 } from './dtos';
-import { HousesService } from './birdhouses.service';
+import { BirdhouseService } from './birdhouse.service';
 import { NotEmptyObjectPipe } from './pipes/not-empty-object.pipe';
 import { UbidAuthGuard } from './guards/ubid-auth.guard';
 import { BasicAuthGuard } from './guards/basic-auth.guard';
 
 @Controller('birdhouses')
-export class BirdhousesController {
-  constructor(private readonly houseService: HousesService) {}
+export class BirdhouseController {
+  constructor(private readonly houseService: BirdhouseService) {}
 
   @Post('seed')
   @HttpCode(HttpStatus.CREATED)
