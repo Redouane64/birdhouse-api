@@ -20,7 +20,7 @@ export class UbidAuthGuard implements CanActivate {
     }
 
     const [birdhouse] = await this.dataSource.query(
-      'SELECT ubid, name FROM birdhouses WHERE ubid = $1 LIMIT 1',
+      'SELECT ubid FROM birdhouses WHERE ubid = $1 LIMIT 1',
       [ubid],
     );
 
