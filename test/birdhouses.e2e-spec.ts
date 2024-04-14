@@ -92,11 +92,12 @@ describe('BirdhousesController (e2e)', () => {
         latitude: 12.234,
         longitude: 45.678,
       };
-      const expectedbirdAndEggs = { eggs: 0, birds: 0 };
+      const expectedBirdsAndEggs = { eggs: 0, birds: 0 };
 
       jest
         .spyOn(dataSource, 'query')
-        .mockImplementationOnce(async () => [expectedbirdAndEggs]);
+        .mockImplementationOnce(async () => [{ ubid }])
+        .mockImplementationOnce(async () => [expectedBirdsAndEggs]);
 
       jest
         .spyOn(housesService, 'updateBirdhouse')
@@ -104,18 +105,24 @@ describe('BirdhousesController (e2e)', () => {
 
       return request(app.getHttpServer())
         .patch(`/birdhouses/${ubid}`)
+        .set('X-UBID', ubid)
         .send(body)
         .expect(HttpStatus.OK)
-        .expect({ ...body, ...expectedbirdAndEggs });
+        .expect({ ...body, ...expectedBirdsAndEggs });
     });
 
     it('/houses/:ubid (PATCH) disallow empty payload', () => {
       const ubid = 'd41b063e-8171-435b-9908-c7265e08e85b';
 
+      jest
+        .spyOn(dataSource, 'query')
+        .mockImplementationOnce(async () => [{ ubid }]);
+
       return request(app.getHttpServer())
         .patch(`/birdhouses/${ubid}`)
-        .expect(HttpStatus.BAD_REQUEST)
+        .set('X-UBID', ubid)
         .send({})
+        .expect(HttpStatus.BAD_REQUEST)
         .expect({
           message: 'Empty object is not allowed',
           error: 'Bad Request',
@@ -125,6 +132,10 @@ describe('BirdhousesController (e2e)', () => {
 
     it('/houses/:ubid (PATCH) birdhouse not found', () => {
       const ubid = 'd41b063e-8171-435b-9908-c7265e08e85b';
+
+      jest
+        .spyOn(dataSource, 'query')
+        .mockImplementationOnce(async () => [{ ubid }]);
 
       jest
         .spyOn(housesService, 'updateBirdhouse')
@@ -138,6 +149,7 @@ describe('BirdhousesController (e2e)', () => {
 
       return request(app.getHttpServer())
         .patch(`/birdhouses/${ubid}`)
+        .set('X-UBID', ubid)
         .send(body)
         .expect(HttpStatus.NOT_FOUND)
         .expect({
@@ -168,11 +180,13 @@ describe('BirdhousesController (e2e)', () => {
 
       jest
         .spyOn(dataSource, 'query')
+        .mockImplementationOnce(async () => [{ ubid }])
         .mockImplementationOnce(async () => [expectBody])
         .mockImplementationOnce(async () => [occupancy]);
 
       return request(app.getHttpServer())
         .post(`/birdhouses/${ubid}/occupancy`)
+        .set('X-UBID', ubid)
         .send(occupancy)
         .expect(HttpStatus.CREATED)
         .expect(expectBody);
@@ -195,6 +209,7 @@ describe('BirdhousesController (e2e)', () => {
 
       return request(app.getHttpServer())
         .get(`/birdhouses/${ubid}`)
+        .set('X-UBID', ubid)
         .expect(HttpStatus.OK)
         .expect(expectedBody);
     });
