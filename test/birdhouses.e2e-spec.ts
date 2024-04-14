@@ -189,7 +189,7 @@ describe('BirdhousesController (e2e)', () => {
           name: expectedResponse.name,
           latitude: expectedResponse.latitude,
           longitude: expectedResponse.longitude,
-          history: [],
+          occupancy: [],
         }));
       jest
         .spyOn(occupancyRepository, 'save')
@@ -229,7 +229,7 @@ describe('BirdhousesController (e2e)', () => {
           id: 'bc73c77e-16cf-4a5b-9154-fc174894dcc8',
           ubid,
           ...expectedResponse,
-          history: [],
+          occupancy: [],
         }));
 
       jest.spyOn(occupancyRepository, 'find').mockImplementation(async () => [

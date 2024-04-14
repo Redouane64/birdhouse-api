@@ -29,5 +29,5 @@ export class BirdhouseEntity implements Omit<Birdhouse, 'eggs' | 'birds'> {
   latitude: number;
 
   @OneToMany(() => BirdhouseOccupancyEntity, (e) => e.birdhouse)
-  history: Occupancy[];
+  occupancy: Occupancy[];
 }
