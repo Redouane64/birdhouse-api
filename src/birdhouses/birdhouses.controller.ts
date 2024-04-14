@@ -20,6 +20,7 @@ import {
 import { HousesService } from './birdhouses.service';
 import { NotEmptyObjectPipe } from './pipes/not-empty-object.pipe';
 import { UbidAuthGuard } from './guards/ubid-auth.guard';
+import { BasicAuthGuard } from './guards/basic-auth.guard';
 
 @Controller('birdhouses')
 export class BirdhousesController {
@@ -27,6 +28,7 @@ export class BirdhousesController {
 
   @Post('seed')
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(BasicAuthGuard)
   async seed(@Body() data: RegisterBirdhouseDto[]) {
     return await this.houseService.createMany(data);
   }
