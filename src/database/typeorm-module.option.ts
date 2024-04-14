@@ -1,13 +1,13 @@
 import { ConfigService } from '@nestjs/config';
-import { DatabaseConfig } from './database-config';
+import { DatabaseConfig } from '../config/database-config';
 import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
 import { BirdhouseEntity } from '../birdhouse/entities/birdhouse.entity';
 import { BirdhouseOccupancyEntity } from '../birdhouse/entities/birdhouse-occupancy.entity';
-import { AppConfig } from './app-config';
-import { DatabaseLogger } from '../database/logger';
+import { AppConfig } from '../config/app-config';
+import { DatabaseLogger } from './logger';
 
 export const typeOrmModuleOptions: TypeOrmModuleAsyncOptions = {
   inject: [ConfigService],
