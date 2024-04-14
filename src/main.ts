@@ -7,11 +7,13 @@ import { LoggerErrorInterceptor, Logger as PinoLogger } from 'nestjs-pino';
 import dataSource from './database/data-source';
 
 async function bootstrap() {
-  await dataSource.initialize();
-  Logger.log(`Running database migrations...`);
-  await dataSource.runMigrations();
-  Logger.log(`Migrations ran successfully`);
-  await dataSource.destroy();
+  if (process.env.NODE_ENV !== 'test') {
+    await dataSource.initialize();
+    Logger.log(`Running database migrations...`);
+    await dataSource.runMigrations();
+    Logger.log(`Migrations ran successfully`);
+    await dataSource.destroy();
+  }
 
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.useLogger(await app.resolve(PinoLogger));
