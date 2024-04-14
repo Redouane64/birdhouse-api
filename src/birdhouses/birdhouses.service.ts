@@ -101,4 +101,48 @@ export class HousesService {
     const [birdhouse] = updateResult.raw;
     return birdhouse;
   }
+
+  async createMany(data: RegisterBirdhouseDto[]) {
+    const birdhouseInsertResult = await this.dataSource
+      .createQueryBuilder()
+      .insert()
+      .into('birdhouses', ['name', 'longitude', 'latitude'])
+      .values(data)
+      .returning('ubid, name, longitude, latitude')
+      .execute();
+
+    const occupancyData = birdhouseInsertResult.raw.map(({ ubid }) => ({
+      ubid,
+      birds: 0,
+      eggs: 0,
+    }));
+
+    const occupancyInsertResult = await this.dataSource
+      .createQueryBuilder()
+      .insert()
+      .into('birdhouses_history', ['ubid', 'birds', 'eggs'])
+      .values(occupancyData)
+      .returning('ubid, birds, eggs')
+      .execute();
+
+    return this.joinArrays(
+      birdhouseInsertResult.raw,
+      occupancyInsertResult.raw,
+      'ubid',
+    );
+  }
+
+  // Join arrays based on the common field
+  joinArrays(arrayA, arrayB, commonField) {
+    // Create a map from arrayB using the common field
+    const map = arrayB.reduce((acc, obj) => {
+      acc[obj[commonField]] = obj;
+      return acc;
+    }, {});
+
+    return arrayA.map((item) => ({
+      ...item,
+      ...map[item[commonField]],
+    }));
+  }
 }

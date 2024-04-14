@@ -25,6 +25,12 @@ import { UbidAuthGuard } from './guards/ubid-auth.guard';
 export class BirdhousesController {
   constructor(private readonly houseService: HousesService) {}
 
+  @Post('seed')
+  @HttpCode(HttpStatus.CREATED)
+  async seed(@Body() data: RegisterBirdhouseDto[]) {
+    return await this.houseService.createMany(data);
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe({ transform: true }))
