@@ -4,8 +4,10 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
+import { BirdhouseEntity } from '../birdhouse/entities/birdhouse.entity';
+import { BirdhouseOccupancyEntity } from '../birdhouse/entities/birdhouse-occupancy.entity';
 
-export const typeormModuleOptions: TypeOrmModuleAsyncOptions = {
+export const typeOrmModuleOptions: TypeOrmModuleAsyncOptions = {
   inject: [ConfigService],
   useFactory: (configService: ConfigService): TypeOrmModuleOptions => {
     const { host, port, database, username, password } =
@@ -18,6 +20,9 @@ export const typeormModuleOptions: TypeOrmModuleAsyncOptions = {
       username,
       password,
       applicationName: 'birdhouse-api',
+      entities: [BirdhouseEntity, BirdhouseOccupancyEntity],
+      logger: 'advanced-console',
+      logging: 'all',
     };
   },
 };

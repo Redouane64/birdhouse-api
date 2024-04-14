@@ -4,8 +4,15 @@ import { ConfigService } from '@nestjs/config';
 import { AppConfig } from './config/app-config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { LoggerErrorInterceptor, Logger as PinoLogger } from 'nestjs-pino';
+import dataSource from './database/data-source';
 
 async function bootstrap() {
+  await dataSource.initialize();
+  Logger.log(`Running database migrations...`);
+  await dataSource.runMigrations();
+  Logger.log(`Migrations ran successfully`);
+  await dataSource.destroy();
+
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.useLogger(await app.resolve(PinoLogger));
   app.flushLogs();
