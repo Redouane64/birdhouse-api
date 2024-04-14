@@ -22,7 +22,7 @@ import { NotEmptyObjectPipe } from './pipes/not-empty-object.pipe';
 import { UbidAuthGuard } from './guards/ubid-auth.guard';
 import { BasicAuthGuard } from './guards/basic-auth.guard';
 
-@Controller('birdhouses')
+@Controller('house')
 export class BirdhouseController {
   constructor(private readonly houseService: BirdhouseService) {}
 
