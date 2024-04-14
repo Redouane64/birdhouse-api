@@ -15,5 +15,8 @@ declare namespace NodeJS {
     // auth
     SEED_AUTH_USERNAME: string;
     SEED_AUTH_PASSWORD: string;
+
+    // jobs
+    CRON_PRUNE_BIRDHOUSE_PERIOD: string;
   }
 }
