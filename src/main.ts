@@ -15,6 +15,10 @@ async function bootstrap() {
   await dataSource.destroy();
 
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  app.enableCors({
+    origin: '*',
+    methods: ['PATCH', 'GET', 'POST'],
+  });
   app.useLogger(await app.resolve(PinoLogger));
   app.flushLogs();
 
