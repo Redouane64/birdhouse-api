@@ -14,13 +14,21 @@ import {
 } from '@nestjs/common';
 import {
   AddOccupancyDto,
+  BirdhouseResponse,
   RegisterBirdhouseDto,
+  RegisterBirdhouseResponse,
   UpdateBirdhouseDto,
 } from './dtos';
 import { BirdhouseService } from './birdhouse.service';
 import { NotEmptyObjectPipe } from './pipes/not-empty-object.pipe';
 import { UbidAuthGuard } from './guards/ubid-auth.guard';
-import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiHeader,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Birdhouse')
 @Controller('house')
@@ -31,6 +39,7 @@ export class BirdhouseController {
     operationId: 'register',
     summary: 'Register a birdhouse',
   })
+  @ApiCreatedResponse({ type: RegisterBirdhouseResponse })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -43,6 +52,7 @@ export class BirdhouseController {
     summary: 'Update birdhouse data',
   })
   @ApiHeader({ name: 'X-UBID', required: true })
+  @ApiOkResponse({ type: [BirdhouseResponse] })
   @Patch(':ubid')
   @HttpCode(HttpStatus.OK)
   @UseGuards(UbidAuthGuard)
@@ -58,6 +68,7 @@ export class BirdhouseController {
     summary: 'Update birdhouse occupancy',
   })
   @ApiHeader({ name: 'X-UBID', required: true })
+  @ApiCreatedResponse({ type: [BirdhouseResponse] })
   @Post(':ubid/occupancy')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(UbidAuthGuard)
@@ -76,6 +87,7 @@ export class BirdhouseController {
     name: 'X-UBID',
     required: true,
   })
+  @ApiOkResponse({ type: [BirdhouseResponse] })
   @Get(':ubid')
   @HttpCode(HttpStatus.OK)
   @UseGuards(UbidAuthGuard)

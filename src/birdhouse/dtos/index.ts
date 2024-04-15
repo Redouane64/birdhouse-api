@@ -52,3 +52,46 @@ export class AddOccupancyDto implements Pick<Birdhouse, 'birds' | 'eggs'> {
   @IsPositive()
   eggs: number;
 }
+
+export class RegisterBirdhouseResponse implements Birdhouse {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  ubid: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  longitude: number;
+
+  @ApiProperty()
+  latitude: number;
+
+  @ApiProperty()
+  birds: number;
+
+  @ApiProperty()
+  eggs: number;
+}
+
+export class BirdhouseResponse implements Omit<Birdhouse, 'id'> {
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  latitude: number;
+
+  @ApiProperty()
+  longitude: number;
+
+  @ApiProperty()
+  ubid: string;
+
+  @ApiProperty()
+  birds: number;
+
+  @ApiProperty()
+  eggs: number;
+}

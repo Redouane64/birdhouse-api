@@ -6,10 +6,16 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { RegisterBirdhouseDto } from './dtos';
+import { BirdhouseResponse, RegisterBirdhouseDto } from './dtos';
 import { BirdhouseService } from './birdhouse.service';
 import { BasicAuthGuard } from './guards/basic-auth.guard';
-import { ApiBasicAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBasicAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Admin')
 @Controller('house')
@@ -23,6 +29,7 @@ export class BirdhouseAdminController {
   })
   @ApiBasicAuth()
   @ApiBody({ type: [RegisterBirdhouseDto] })
+  @ApiCreatedResponse({ type: [BirdhouseResponse] })
   @Post('seed')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(BasicAuthGuard)
