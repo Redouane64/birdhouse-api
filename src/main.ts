@@ -6,6 +6,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { LoggerErrorInterceptor, Logger as PinoLogger } from 'nestjs-pino';
 import dataSource from './database/data-source';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   await dataSource.initialize();
@@ -14,11 +15,15 @@ async function bootstrap() {
   Logger.log(`Migrations ran successfully`);
   await dataSource.destroy();
 
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bufferLogs: true,
+  });
   app.enableCors({
     origin: '*',
     methods: ['PATCH', 'GET', 'POST'],
   });
+  app.disable('x-powered-by');
+
   app.useLogger(await app.resolve(PinoLogger));
   app.flushLogs();
 
