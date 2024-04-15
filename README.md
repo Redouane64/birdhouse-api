@@ -24,7 +24,8 @@ Birdhouse API is implement according the requirements and design decisions descr
   6. In the app, I made the following assumptions:
       - UBID returned from register `POST /house` endpoint is used for `ubid` value in API parameter for `GET house/ubid`, `PATCH house/ubid` and `POST house/ubid/occupancy` endpoints. The same `ubid` value is also used for `X-UBID` authentication header.
 
-**Note:** environment variables defined in `.env.development` must be set in order to run the API service correctly.
+**Note:**
+> environment variables defined in `.env.development` must be set in order to run the API service correctly.
 
 ## Getting Started
 
@@ -50,7 +51,10 @@ docker compose -f ./docker/docker-compose.yml up
 npm run start # or npm run start:dev
 ```
 
-- Swagger docs available at: `http://<localhost>:<port>/swagger`
+**Note:**
+> A Postman Collection is provided for API testing with postman, see `birdhouse.postman_collection.json` file.
+
+- Swagger docs available at: `http://<localhost>:<port>/swagger` and schema at: `/swagger-json`
 
 ## Database Migrations (Optional)
 
