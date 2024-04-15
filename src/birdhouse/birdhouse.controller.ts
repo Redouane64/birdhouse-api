@@ -20,19 +20,17 @@ import {
 import { BirdhouseService } from './birdhouse.service';
 import { NotEmptyObjectPipe } from './pipes/not-empty-object.pipe';
 import { UbidAuthGuard } from './guards/ubid-auth.guard';
-import { BasicAuthGuard } from './guards/basic-auth.guard';
+import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Birdhouse')
 @Controller('house')
 export class BirdhouseController {
   constructor(private readonly houseService: BirdhouseService) {}
 
-  @Post('seed')
-  @HttpCode(HttpStatus.CREATED)
-  @UseGuards(BasicAuthGuard)
-  async seed(@Body() data: RegisterBirdhouseDto[]) {
-    return await this.houseService.createMany(data);
-  }
-
+  @ApiOperation({
+    operationId: 'register',
+    summary: 'Register a birdhouse',
+  })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -40,6 +38,11 @@ export class BirdhouseController {
     return await this.houseService.create(data);
   }
 
+  @ApiOperation({
+    operationId: 'update',
+    summary: 'Update birdhouse data',
+  })
+  @ApiHeader({ name: 'X-UBID', required: true })
   @Patch(':ubid')
   @HttpCode(HttpStatus.OK)
   @UseGuards(UbidAuthGuard)
@@ -50,6 +53,11 @@ export class BirdhouseController {
     return await this.houseService.update(ubid, data);
   }
 
+  @ApiOperation({
+    operationId: 'updateOccupancy',
+    summary: 'Update birdhouse occupancy',
+  })
+  @ApiHeader({ name: 'X-UBID', required: true })
   @Post(':ubid/occupancy')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(UbidAuthGuard)
@@ -60,6 +68,14 @@ export class BirdhouseController {
     return await this.houseService.updateOccupancy(ubid, data.eggs, data.birds);
   }
 
+  @ApiOperation({
+    operationId: 'get',
+    summary: 'Get birdhouse by UBID',
+  })
+  @ApiHeader({
+    name: 'X-UBID',
+    required: true,
+  })
   @Get(':ubid')
   @HttpCode(HttpStatus.OK)
   @UseGuards(UbidAuthGuard)
