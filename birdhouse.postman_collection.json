@@ -1,0 +1,237 @@
+{
+	"info": {
+		"_postman_id": "535d78d8-f5fe-419e-93a4-47928a589c03",
+		"name": "Birdhouse",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12708354"
+	},
+	"item": [
+		{
+			"name": "Register Birdhouse",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test to extract ubid from the response and store it in a collection variable",
+							"pm.test(\"Extract ubid and store it in collection variable UBID\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.have.property('ubid');",
+							"    pm.collectionVariables.set(\"UBID\", responseData.ubid);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"name\": \"Harar\",\n   \"longitude\": 100.3,\n   \"latitude\": 51.15\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/house",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"house"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update House",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "X-UBID",
+						"value": "{{UBID}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Milkyway\",\n    \"longitude\": 99,\n    \"latitude\": 4\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/house/{{UBID}}",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"house",
+						"{{UBID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get House By UBID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-UBID",
+						"value": "{{UBID}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/house/{{UBID}}",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"house",
+						"{{UBID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Occupancy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-UBID",
+						"value": "{{UBID}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"birds\": 6,\n    \"eggs\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/house/{{UBID}}/occupancy",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"house",
+						"{{UBID}}",
+						"occupancy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "healthz",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/healthz",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"healthz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Seed",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "world",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "hello",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"name\": \"Soup\",\n        \"longitude\": 44.3,\n        \"latitude\": 56.1\n    },\n    {\n        \"name\": \"Mexico\",\n        \"longitude\": 15,\n        \"latitude\": 45.1\n    },\n    {\n        \"name\": \"Jewel\",\n        \"longitude\": 88,\n        \"latitude\": 17.5\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/house/seed",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"house",
+						"seed"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://127.0.0.1:5000",
+			"type": "string"
+		},
+		{
+			"key": "UBID",
+			"value": "43779dd8-43a9-44d9-bfd6-8a9f9a51c5c2",
+			"type": "string"
+		}
+	]
+}
