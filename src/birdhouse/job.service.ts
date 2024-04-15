@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { DataSource, JsonContains } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import * as dotenv from 'dotenv';
 dotenv.config({ path: ['.env', '.env.development'] });
 
 @Injectable()
 export class JobService {
-  private readonly logger = new Logger(JsonContains.name);
+  private readonly logger = new Logger(JobService.name);
 
   constructor(private readonly dataSource: DataSource) {}
 
