@@ -26,7 +26,7 @@ export class UbidAuthGuard implements CanActivate {
 
     const birdhouse = await this.birdhouses.findOne({ where: { ubid } });
     // birdhouse instance can be cached and provided in the api endpoint handler
-    // to avoid extra database to fetch the same birdhouse inside BirdhouseService
+    // to avoid extra database query to fetch the same birdhouse inside `BirdhouseService`
     return !!birdhouse;
   }
 }
